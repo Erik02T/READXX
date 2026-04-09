@@ -1,0 +1,22 @@
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import webExtension from "vite-plugin-web-extension";
+
+export default defineConfig({
+  base: "",
+  plugins: [
+    webExtension({
+      manifest: "manifest.json",
+      additionalInputs: [],
+      htmlViteConfig: {
+        plugins: [tailwindcss(), react()],
+      },
+    }),
+  ],
+  build: {
+    outDir: "dist",
+    emptyOutDir: true,
+    sourcemap: true,
+  },
+});
