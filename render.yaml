@@ -6,6 +6,5 @@ services:
     healthCheckPath: /actuator/health
     autoDeploy: true
     dockerfilePath: ./Dockerfile
-    envVars:
-      - key: JAVA_OPTS
-        value: -Xmx512M
+
+
