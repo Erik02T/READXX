@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: readxx-postgres
+    environment:
+      POSTGRES_DB: readxx
+      POSTGRES_USER: readxx_user
+      POSTGRES_PASSWORD: readxx_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U readxx_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - readxx-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: readxx-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - readxx-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: readxx-backend
+    ports:
+      - "8080:8080"
+    environment:
+      POSTGRES_URL: jdbc:postgresql://postgres:5432/readxx?sslmode=disable
+      POSTGRES_USER: readxx_user
+      POSTGRES_PASSWORD: readxx_password
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ""
+      REDIS_SSL: "false"
+      JWT_SECRET: ${JWT_SECRET:-UAf91pVPUyIskxo5eLfLlcLZyp+leSZAR3OncAGWKNmBxW7igDJwDQ8Rg6tmAimu}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000}
+      SPRING_PROFILES_ACTIVE: prod
+      HIBERNATE_DDL_AUTO: validate
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - readxx-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  readxx-network:
+    driver: bridge

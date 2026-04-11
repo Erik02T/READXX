@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: readxx-backend
+    runtime: docker
+    plan: standard
+    healthCheckPath: /actuator/health
+    autoDeploy: true
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: JAVA_OPTS
+        value: -Xmx512M
