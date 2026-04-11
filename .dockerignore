@@ -1,0 +1,26 @@
+# Ignore frontend (only root-level directories)
+/node_modules/
+/dist/
+/src/
+/popup/
+/sidepanel/
+/background/
+/icons/
+
+# Ignore config files
+.env
+.env.local
+.vscode/
+.git/
+.gitignore
+
+# IDE
+*.iml
+.idea/
+
+# OS
+.DS_Store
+*.log
+
+# Build artifacts (keep backend/target)
+/target/
